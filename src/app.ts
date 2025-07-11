@@ -6,11 +6,13 @@ import nunjucks from "nunjucks";
 import cors from "cors";
 import slugify from "slugify";
 import blogData from "../data/blogentries.json";
+import { logger } from "./middleware/loggerMiddleware";
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(cors());
+app.use(logger);
 app.use(express.static("public"));
 
 nunjucks.configure("templates", {
