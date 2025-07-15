@@ -16,9 +16,9 @@ export const modelMiddleware = (
 export class BlogEntryModel {
   private static instance: BlogEntryModel;
 
-  private _blogEntries: Map<string, BlogEntry>;
+  private _blogEntryMap: Map<string, BlogEntry>;
   private constructor() {
-    this._blogEntries = new Map();
+    this._blogEntryMap = new Map();
   }
 
   public static getInstance(): BlogEntryModel {
@@ -32,20 +32,20 @@ export class BlogEntryModel {
     const blogEntries = await fs.readJson("data/blogentries.json");
     const parsed = blogEntrySchema.array().parse(blogEntries);
     for (const blogEntry of parsed) {
-      this._blogEntries.set(blogEntry.slug, blogEntry);
+      this._blogEntryMap.set(blogEntry.slug, blogEntry);
     }
   }
 
   private async save(): Promise<void> {
-    const blogEntries = Array.from(this._blogEntries.values());
+    const blogEntries = Array.from(this._blogEntryMap.values());
     await fs.writeJson("data/blogentries.json", blogEntries);
   }
 
   public findBlogEntryBySlug(slug: string): BlogEntry | undefined {
-    return this._blogEntries.get(slug);
+    return this._blogEntryMap.get(slug);
   }
 
   get blogEntries(): BlogEntry[] {
-    return Array.from(this._blogEntries.values());
+    return Array.from(this._blogEntryMap.values());
   }
 }
