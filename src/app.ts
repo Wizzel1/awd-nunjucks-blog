@@ -15,7 +15,7 @@ app.use(logger);
 app.use(modelMiddleware);
 app.use(express.static("public"));
 
-nunjucks.configure("templates", {
+nunjucks.configure("views", {
   autoescape: true,
   express: app,
 });

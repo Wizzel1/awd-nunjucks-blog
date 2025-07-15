@@ -9,7 +9,7 @@ export default function readPostController(req: Request, res: Response) {
     return res.status(404).send("Post not found");
   }
 
-  res.render("post.html", {
+  res.render("pages/post.html", {
     title: post.title,
     image: post.image,
     author: post.author,
