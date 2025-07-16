@@ -4,4 +4,4 @@ export default async function listBlogEntry(req: Request, res: Response) {
   const blogEntryModel = res.locals.blogEntryModel;
   const blogEntries = blogEntryModel.blogEntries;
   res.render("admin/indexPage.html", { blogEntries });
-} 
+}

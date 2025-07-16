@@ -1,0 +1,130 @@
+{% extends "layouts/_adminLayout.html" %}
+
+{% block title %}Blog Management{% endblock %}
+
+{% block pageTitle %}Blog Management{% endblock %}
+
+{% block additionalCSS %}
+<style>
+  .post-preview {
+    border-bottom: 1px solid #e9ecef;
+    padding: 1.5rem 0;
+  }
+  .post-preview:last-child {
+    border-bottom: none;
+  }
+  .post-actions {
+    margin-top: 1rem;
+  }
+  .btn-group .btn {
+    margin-right: 0.5rem;
+  }
+  .admin-header {
+    background-color: #212529;
+    color: white;
+    padding: 2rem 0;
+    margin-bottom: 2rem;
+  }
+  .no-posts {
+    text-align: center;
+    padding: 3rem 0;
+    color: #6c757d;
+  }
+</style>
+{% endblock %}
+
+{% block mainContent %}
+<!-- Header -->
+<div class="admin-header">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-10 col-lg-8 col-xl-7">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h1 class="mb-1">Blog Management</h1>
+            <p class="mb-0">Manage your blog posts</p>
+          </div>
+          <a href="/admin/posts/new" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>New Post
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8 col-xl-7">
+      {% if blogEntries and blogEntries.length > 0 %}
+        {% for post in blogEntries %}
+        <div class="post-preview">
+          <h2 class="post-title">{{ post.title }}</h2>
+          <h3 class="post-subtitle">{{ post.teaser }}</h3>
+          <p class="post-meta">
+            Posted by
+            <span class="text-muted">{{ post.author }}</span>
+            on {{ post.date }}
+          </p>
+          <div class="post-actions">
+            <a href="/admin/posts/edit/{{ loop.index0 }}" class="btn btn-outline-primary btn-sm">
+              <i class="fas fa-edit me-1"></i>Edit
+            </a>
+            <button class="btn btn-outline-danger btn-sm delete-btn" data-index="{{ loop.index0 }}" data-title="{{ post.title }}">
+              <i class="fas fa-trash me-1"></i>Delete
+            </button>
+            <a href="/post/{{ post.slug }}" class="btn btn-outline-secondary btn-sm" target="_blank">
+              <i class="fas fa-eye me-1"></i>View
+            </a>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="no-posts">
+          <i class="fas fa-file-alt fa-3x mb-3"></i>
+          <h4>No blog posts yet</h4>
+          <p class="text-muted">Create your first blog post to get started.</p>
+          <a href="/admin/posts/new" class="btn btn-primary">
+            <i class="fas fa-plus me-2"></i>Create First Post
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block additionalJS %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const deleteButtons = document.querySelectorAll('.delete-btn');
+  
+  deleteButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const index = this.dataset.index;
+      const title = this.dataset.title;
+      
+      if (confirm(`Are you sure you want to delete "${title}"?`)) {
+        // TODO: Implement delete functionality
+        // This would typically send a DELETE request to /admin/posts/delete/:index
+        fetch(`/admin/posts/delete/${index}`, {
+          method: 'DELETE',
+        })
+        .then(response => {
+          if (response.ok) {
+            location.reload();
+          } else {
+            alert('Error deleting post');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('Error deleting post');
+        });
+      }
+    });
+  });
+});
+</script>
+{% endblock %}

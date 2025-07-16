@@ -6,6 +6,7 @@ import cors from "cors";
 import { logger } from "./middleware/loggerMiddleware";
 import { BlogEntryModel, modelMiddleware } from "./models/blogEntryModel";
 import publicRoutes from "./routes/publicRoutes";
+import adminRoutes from "./routes/adminRoutes";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -15,12 +16,13 @@ app.use(logger);
 app.use(modelMiddleware);
 app.use(express.static("public"));
 
-nunjucks.configure("views", {
+nunjucks.configure("src/views", {
   autoescape: true,
   express: app,
 });
 
 app.use(publicRoutes);
+app.use(adminRoutes);
 
 (async () => {
   const blogModel = BlogEntryModel.getInstance();
