@@ -12,9 +12,14 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(cors());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(logger);
 app.use(modelMiddleware);
 app.use(express.static("public"));
+
+// Serve EditorJS files from node_modules
+app.use('/editorjs', express.static('node_modules/@editorjs/editorjs/dist'));
 
 nunjucks.configure("src/views", {
   autoescape: true,

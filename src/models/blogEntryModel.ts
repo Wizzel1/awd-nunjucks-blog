@@ -17,6 +17,7 @@ export class BlogEntryModel {
   private static instance: BlogEntryModel;
 
   private _blogEntryMap: Map<string, BlogEntry>;
+
   private constructor() {
     this._blogEntryMap = new Map();
   }
@@ -36,13 +37,29 @@ export class BlogEntryModel {
     }
   }
 
-  private async save(): Promise<void> {
-    const blogEntries = Array.from(this._blogEntryMap.values());
-    await fs.writeJson("data/blogentries.json", blogEntries);
+  public async save(): Promise<void> {
+    await fs.writeJson("data/blogentries.json", this.blogEntries);
   }
 
   public findBlogEntryBySlug(slug: string): BlogEntry | undefined {
     return this._blogEntryMap.get(slug);
+  }
+
+  public async updateBlogEntryBySlug(
+    slug: string,
+    updatedEntry: Omit<BlogEntry, "slug">
+  ): Promise<boolean> {
+    const oldEntry = this._blogEntryMap.get(slug);
+    if (!oldEntry) {
+      return false;
+    }
+
+    const validatedEntry = blogEntrySchema.parse(updatedEntry);
+    this._blogEntryMap.delete(oldEntry.slug);
+    this._blogEntryMap.set(validatedEntry.slug, validatedEntry);
+    await this.save();
+
+    return true;
   }
 
   get blogEntries(): BlogEntry[] {

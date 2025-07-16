@@ -68,7 +68,7 @@
             on {{ post.date }}
           </p>
           <div class="post-actions">
-            <a href="/admin/posts/edit/{{ loop.index0 }}" class="btn btn-outline-primary btn-sm">
+            <a href="/admin/posts/edit/{{ post.slug }}" class="btn btn-outline-primary btn-sm">
               <i class="fas fa-edit me-1"></i>Edit
             </a>
             <button class="btn btn-outline-danger btn-sm delete-btn" data-index="{{ loop.index0 }}" data-title="{{ post.title }}">

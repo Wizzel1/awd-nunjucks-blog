@@ -1,0 +1,164 @@
+{% extends "layouts/_adminLayout.html" %}
+
+{% block title %}Edit Post{% endblock %}
+
+{% block pageTitle %}Edit Post{% endblock %}
+
+{% block additionalCSS %}
+<style>
+  .edit-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+  
+  .form-control {
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    padding: 0.75rem;
+  }
+  
+  .form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+  }
+  
+  #editor {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    min-height: 300px;
+    padding: 1rem;
+    background: white;
+  }
+  
+  .btn-group {
+    margin-top: 2rem;
+  }
+  
+  .btn-group .btn {
+    margin-right: 1rem;
+  }
+</style>
+{% endblock %}
+
+{% block mainContent %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-10 col-lg-8">
+      <div class="edit-form">
+        <h2 class="mb-4">Edit Post</h2>
+        
+        <form id="editForm">
+          <div class="form-group">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" class="form-control" id="title" name="title" value="{{ post.title }}" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="image" class="form-label">Image</label>
+            <input type="text" class="form-control" id="image" name="image" value="{{ post.image }}" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="author" class="form-label">Author</label>
+            <input type="text" class="form-control" id="author" name="author" value="{{ post.author }}" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="teaser" class="form-label">Teaser</label>
+            <textarea class="form-control" id="teaser" name="teaser" rows="3" required>{{ post.teaser }}</textarea>
+          </div>
+          
+          <div class="form-group">
+            <label for="editor" class="form-label">Content</label>
+            <div id="editor"></div>
+          </div>
+          
+          <div class="btn-group">
+            <button type="submit" class="btn btn-primary">
+              <i class="fas fa-save me-2"></i>Update Post
+            </button>
+            <a href="/admin" class="btn btn-secondary">
+              <i class="fas fa-arrow-left me-2"></i>Back to Admin
+            </a>
+          </div>
+        </form>
+        
+        <div id="alertContainer"></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block additionalJS %}
+<script src="/editorjs/editorjs.umd.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize EditorJS
+  const editor = new EditorJS({
+    holder: 'editor',
+    placeholder: 'Write your content here...',
+    data: {
+      blocks: [
+        {
+          type: 'paragraph',
+          data: {
+            text: `{{ post.content | safe }}`.replace(/<[^>]*>/g, '')
+          }
+        }
+      ]
+    }
+  });
+
+  // Handle form submission
+  document.getElementById('editForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    try {
+      const outputData = await editor.save();
+      
+      // Convert EditorJS blocks to simple HTML
+      const htmlContent = outputData.blocks
+        .map(block => `<p>${block.data.text || ''}</p>`)
+        .join('');
+      
+      // Submit form
+      const response = await fetch(window.location.pathname, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: document.getElementById('title').value,
+          image: document.getElementById('image').value,
+          author: document.getElementById('author').value,
+          teaser: document.getElementById('teaser').value,
+          content: htmlContent
+        })
+      });
+      
+      const result = await response.json();
+      
+      if (response.ok) {
+        alert('Post updated successfully!');
+        window.location.href = '/admin';
+      } else {
+        alert('Error: ' + (result.error || 'Failed to update post'));
+      }
+    } catch (error) {
+      alert('Error updating post: ' + error.message);
+    }
+  });
+});
+</script>
+{% endblock %} 
