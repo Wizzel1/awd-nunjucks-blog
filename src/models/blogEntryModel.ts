@@ -1,17 +1,5 @@
-import { NextFunction, Request, Response } from "express";
 import { BlogEntry, blogEntrySchema } from "../types/blogEntry";
-import { debounce } from "radashi";
 import fs from "fs-extra";
-
-export const modelMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const blogEntryModel = BlogEntryModel.getInstance();
-  res.locals.blogEntryModel = blogEntryModel;
-  next();
-};
 
 export class BlogEntryModel {
   private static instance: BlogEntryModel;

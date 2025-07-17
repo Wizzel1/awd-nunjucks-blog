@@ -4,7 +4,7 @@ import express from "express";
 import nunjucks from "nunjucks";
 import cors from "cors";
 import { logger } from "./middleware/loggerMiddleware";
-import { BlogEntryModel, modelMiddleware } from "./models/blogEntryModel";
+import { BlogEntryModel } from "./models/blogEntryModel";
 import publicRoutes from "./routes/publicRoutes";
 import adminRoutes from "./routes/adminRoutes";
 
@@ -15,7 +15,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(logger);
-app.use(modelMiddleware);
 app.use(express.static("public"));
 
 // Serve EditorJS files from node_modules
