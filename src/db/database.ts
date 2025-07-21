@@ -18,6 +18,7 @@ export function connectDB(): Promise<sqlite3.Database> {
           reject(err);
         } else {
           console.log("Connected to the SQLite database.");
+          db!.run("PRAGMA foreign_keys = ON;");
           db!.run(
             `
                     CREATE TABLE IF NOT EXISTS blog_entries (
@@ -45,9 +46,8 @@ export function connectDB(): Promise<sqlite3.Database> {
             `
               CREATE TABLE IF NOT EXISTS redirects (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
-                old_slug TEXT NOT NULL,
-                new_slug TEXT NOT NULL,
-                FOREIGN KEY (entry_id) REFERENCES blog_entries (id)
+                slug TEXT NOT NULL,
+                blog_entry_id INTEGER REFERENCES blog_entries(id)
               )
             `
           );

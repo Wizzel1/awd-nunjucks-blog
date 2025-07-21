@@ -28,5 +28,18 @@ export class RedirectsService {
     const db = getDB();
     if (!db) throw new Error("Database not connected");
     if (entry.slug === new_slug) return;
+    return new Promise<void>((res, rej) => {
+      db.run(
+        "INSERT INTO redirects (old_slug, new_slug, blog_entry_id) VALUES (?, ?, ?)",
+        [entry.slug, new_slug, entry.id],
+        (err) => {
+          if (err) {
+            console.error(err);
+            rej(err);
+          }
+          res();
+        }
+      );
+    });
   }
 }

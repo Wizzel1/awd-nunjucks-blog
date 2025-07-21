@@ -7,7 +7,7 @@ import { logger } from "./middleware/loggerMiddleware";
 import { BlogEntryModel } from "./models/blogEntryModel";
 import publicRoutes from "./routes/publicRoutes";
 import adminRoutes from "./routes/adminRoutes";
-import { closeDB } from "./db/database";
+import { closeDB, connectDB } from "./db/database";
 import { BlogService } from "./services/blogService";
 import { RedirectsService } from "./services/redirectsService";
 
@@ -32,6 +32,7 @@ app.use(publicRoutes);
 app.use(adminRoutes);
 
 (async () => {
+  await connectDB();
   const blogService = new BlogService();
   const redirectsService = new RedirectsService();
   const blogModel = BlogEntryModel.getInstance();
