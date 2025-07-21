@@ -2,6 +2,7 @@ import slugify from "slugify";
 import { z } from "zod";
 export const blogEntrySchema = z
   .object({
+    id: z.number().optional(),
     title: z.string().min(1),
     image: z.string().min(1),
     author: z.string().min(1),
