@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import { BlogEntryModel } from "../models/blogEntryModel";
 
-export default function readPostController(req: Request, res: Response) {
+export default async function readPostController(req: Request, res: Response) {
   const slug = req.params.slug;
   const model = BlogEntryModel.getInstance();
-  const post = model.findBlogEntryBySlug(slug);
+  const post = await model.findBlogEntryBySlug(slug);
   if (!post) {
     return res.status(404).send("Post not found");
   }

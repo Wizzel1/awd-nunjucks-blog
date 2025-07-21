@@ -34,7 +34,7 @@ export async function updatePost(req: Request, res: Response) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
-    const existingPost = model.findBlogEntryBySlug(slug);
+    const existingPost = await model.findBlogEntryBySlug(slug);
     if (!existingPost) {
       return res.status(404).json({ error: "Post not found" });
     }

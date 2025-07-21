@@ -7,6 +7,9 @@ import { logger } from "./middleware/loggerMiddleware";
 import { BlogEntryModel } from "./models/blogEntryModel";
 import publicRoutes from "./routes/publicRoutes";
 import adminRoutes from "./routes/adminRoutes";
+import { closeDB } from "./db/database";
+import { BlogService } from "./services/blogService";
+import { RedirectsService } from "./services/redirectsService";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -29,10 +32,22 @@ app.use(publicRoutes);
 app.use(adminRoutes);
 
 (async () => {
+  const blogService = new BlogService();
+  const redirectsService = new RedirectsService();
   const blogModel = BlogEntryModel.getInstance();
-  await blogModel.init();
+  blogModel.init(blogService, redirectsService);
 
   app.listen(port, () => {
     console.log(`App listening on port ${port}`);
   });
 })();
+
+process.on("SIGINT", async () => {
+  await closeDB();
+  process.exit(0);
+});
+
+process.on("SIGTERM", async () => {
+  await closeDB();
+  process.exit(0);
+});
